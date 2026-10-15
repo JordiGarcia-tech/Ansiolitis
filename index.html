@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Calma y Evidencia · Guía Ansiedad Crónica</title>
+  <!-- Configuración nativa para iPhone (Web App a pantalla completa) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Calma App">
+  <meta name="theme-color" content="#161B22">
+
+  <style>
+    :root {
+      --bg-main: #161B22;
+      --bg-card: #1F2630;
+      --bg-input: #11151C;
+      --border: #2D3748;
+      --sage: #8FA89B;
+      --sage-dark: #161B22;
+      --blue-mist: #A3B1C6;
+      --terracotta: #D49A89;
+      --amber: #D6BC8B;
+      --text-main: #E2E8F0;
+      --text-muted: #A3B1C6;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: calc(95px + env(safe-area-inset-bottom));
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 18px 20px 12px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(22, 27, 34, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .calm-counter {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      color: var(--sage);
+      font-weight: 600;
+    }
+
+    /* Barra de Sonidos Relajantes */
+    .sound-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 12px 20px;
+      background: var(--bg-main);
+      scrollbar-width: none;
+    }
+    .sound-bar::-webkit-scrollbar { display: none; }
+
+    .chip {
+      white-space: nowrap;
+      padding: 8px 14px;
+      border-radius: 20px;
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chip.active {
+      background: var(--sage);
+      color: var(--sage-dark);
+      border-color: var(--sage);
+      font-weight: 700;
+    }
+
+    .container {
+      padding: 12px 20px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .tab-section {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+    .tab-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .card-sage { border-color: rgba(143, 168, 155, 0.5); }
+    .card-terracotta { border-color: rgba(212, 154, 137, 0.6); }
+
+    .section-label {
+      color: var(--sage);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin: 20px 0 10px 0;
+      display: block;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 0 0 8px 0;
+      color: var(--text-main);
+    }
+
+    h3 {
+      font-size: 16px;
+      margin: 0 0 6px 0;
+      color: var(--text-main);
+    }
+
+    p {
+      margin: 0 0 10px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .badge-high { background: rgba(143, 168, 155, 0.2); color: var(--sage); }
+    .badge-mod { background: rgba(214, 188, 139, 0.2); color: var(--amber); }
+    .badge-low { background: rgba(163, 177, 198, 0.2); color: var(--blue-mist); }
+    .badge-warn { background: rgba(212, 154, 137, 0.2); color: var(--terracotta); }
+
+    .btn {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: none;
+      background: var(--sage);
+      color: var(--sage-dark);
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-secondary {
+      background: var(--bg-input);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    }
+
+    input[type="text"], input[type="time"], textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text-main);
+      font-size: 14px;
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--sage);
+      margin: 8px 0 14px 0;
+    }
+
+    /* Botón Flotante SOS */
+    .sos-fab {
+      position: fixed;
+      right: 18px;
+      bottom: calc(78px + env(safe-area-inset-bottom));
+      background: var(--terracotta);
+      color: #161B22;
+      border: none;
+      border-radius: 30px;
+      padding: 13px 20px;
+      font-weight: 800;
+      font-size: 14.5px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+      z-index: 40;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Barra de Navegación Inferior */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 4px calc(8px + env(safe-area-inset-bottom)) 4px;
+      z-index: 30;
+    }
+
+    .nav-item {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 12px;
+      flex: 1;
+    }
+
+    .nav-item.active {
+      color: var(--sage);
+      font-weight: 700;
+      background: rgba(143, 168, 155, 0.12);
+    }
+
+    .nav-icon { font-size: 19px; }
+
+    /* Modal SOS a pantalla completa */
+    .sos-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg-main);
+      z-index: 100;
+      padding: calc(20px + env(safe-area-inset-top)) 20px 30px 20px;
+      overflow-y: auto;
+    }
+    .sos-modal.open { display: block; }
+
+    .breath-circle-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 240px;
+      margin: 15px 0;
+    }
+
+    .breath-circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(143, 168, 155, 0.22);
+      border: 2.5px solid var(--sage);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 40px;
+      font-weight: 300;
+      color: var(--text-main);
+      transition: transform 1s linear;
+    }
+
+    .grounding-dots {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 18px 0;
+    }
+
+    .g-dot {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 2px solid var(--sage);
+      background: var(--bg-input);
+      color: var(--text-main);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .g-dot.done {
+      background: var(--sage);
+      color: var(--sage-dark);
+    }
+
+    ul.clean-list {
+      padding-left: 18px;
+      margin: 8px 0;
+      color: var(--text-main);
+      font-size: 13.8px;
+    }
+    ul.clean-list li { margin-bottom: 6px; }
+
+    .plan-row {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 0;
+      font-size: 13.5px;
+    }
+    .plan-row:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+
+  <!-- CABECERA SUPERIOR -->
+  <header>
+    <h1>🌿 Guía Calma y Evidencia</h1>
+    <div class="calm-counter" id="calmCounter">✨ 0 momentos</div>
+  </header>
+
+  <!-- SELECTOR DE SONIDOS RELAJANTES (GENERADOR ACÚSTICO WEB AUDIO) -->
+  <div class="sound-bar">
+    <button class="chip active" onclick="setSound('off', this)">🔇 Silencio</button>
+    <button class="chip" onclick="setSound('rain', this)">🌧️ Lluvia suave</button>
+    <button class="chip" onclick="setSound('waves', this)">🌊 Olas del mar</button>
+    <button class="chip" onclick="setSound('vagal', this)">🔔 Cuenco Vagal</button>
+  </div>
+
+  <div class="container">
+
+    <!-- =================================================================== -->
+    <!-- PESTAÑA 1: INICIO, NIVELES DE EVIDENCIA Y REGLA DE LAS 2 SEMANAS    -->
+    <!-- =================================================================== -->
+    <section id="tab-home" class="tab-section active">
+      <div class="card card-sage">
+        <span class="badge badge-high">SECCIÓN 1 · CÓMO USAR ESTA GUÍA</span>
+        <h2>Tu refugio sin autoexigencia</h2>
+        <p>La ansiedad crónica se mantiene por varios factores a la vez: <strong>cuerpo</strong> (tensión, sueño, estimulantes), <strong>pensamientos</strong> (preocupación, anticipación) y <strong>conductas</strong> (evitación). Por eso funciona mejor combinar varias herramientas pequeñas y constantes que buscar una sola solución.</p>
+        <p style="font-size:12.5px; color:var(--terracotta); margin-bottom:0;">
+          Importante: esta guía es informativa y complementa, nunca sustituye, el tratamiento de tu médico o psicólogo. No dejes ni cambies medicación por tu cuenta.
+        </p>
+      </div>
+
+      <span class="section-label">CONSEJO PRÁCTICO (EMPIEZA POR 1 COSA 2 SEMANAS)</span>
+      <div class="card">
+        <h3>🎯 Mi único foco para estos 14 días</h3>
+        <p>Intentar cambiarlo todo a la vez suele acabar en abandono y más autoexigencia. Elige <strong>UNA sola cosa</strong> durante dos semanas y luego suma otra:</p>
+        <select id="twoWeekHabit" onchange="saveHabitChoice()">
+          <option value="Caminar 20-30 minutos al día con luz natural">1. Caminar 20-30 minutos al día con luz natural</option>
+          <option value="Respiración diafragmática lenta (5 min, 4s-6s)">2. Respiración diafragmática lenta (5 min al día)</option>
+          <option value="Bajar cafeína poco a poco y no saltar comidas">3. Bajar cafeína poco a poco y no saltar comidas</option>
+          <option value="Apagar pantallas 60 min antes de dormir">4. Apagar pantallas 60 min antes de dormir</option>
+          <option value="Estiramientos suaves 10 min al despertar o dormir">5. Estiramientos suaves 10 min al día</option>
+        </select>
+        <button class="btn" onclick="addCalmMoment('Has reafirmado tu compromiso suave de hoy')">
+          🌱 He cumplido mi pequeño paso de hoy
+        </button>
+      </div>
+
+      <span class="section-label">QUÉ AYUDA SEGÚN LA SOLIDEZ DE LA EVIDENCIA</span>
+      <div class="card">
+        <span class="badge badge-high">EVIDENCIA ALTA</span>
+        <h3>Psicoterapia (TCC) y Tratamiento Médico</h3>
+        <p>Terapia cognitivo-conductual y, cuando el médico lo valora, tratamiento farmacológico.</p>
+
+        <span class="badge badge-high">EVIDENCIA ALTA</span>
+        <h3>Ejercicio Físico Regular</h3>
+        <p>Reduce síntomas de ansiedad de forma consistente en revisiones y metaanálisis (Stubbs 2017, Gordon 2017, Singh 2023).</p>
+
+        <span class="badge badge-mod">EVIDENCIA MODERADA</span>
+        <h3>Mindfulness, Relajación, Respiración y Sueño</h3>
+        <p>Práctica diaria de respiración lenta, relajación muscular, sueño regular y menos estimulantes (cafeína, alcohol, nicotina).</p>
+
+        <span class="badge badge-low">EVIDENCIA MODESTA</span>
+        <h3>Alimentación Tipo Mediterránea</h3>
+        <p style="margin-bottom:0;">Asociada a menos síntomas; la evidencia es en parte observacional.</p>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- PESTAÑA 2: EJERCICIOS (SEC 2) Y RESPIRACIÓN / MENTE / TCC (SEC 3)   -->
+    <!-- =================================================================== -->
+    <section id="tab-body-mind" class="tab-section">
+      <span class="section-label">SECCIÓN 3 · RESPIRACIÓN, RELAJACIÓN Y MENTE</span>
+      <div class="card card-sage">
+        <h3>🫁 Técnicas para practicar en calma</h3>
+        <p>No eliminan la ansiedad de golpe, pero bajan la activación del cuerpo y te enseñan a moverte con ella sin huir:</p>
+        <ul class="clean-list">
+          <li><strong>Respiración diafragmática lenta (5 min, 1-2 veces/día):</strong> Mano en el abdomen. Inspira por la nariz 4 segundos hinchando la barriga, no el pecho. Espira despacio por la boca 6 segundos, como soplando una vela (unas 6 respiraciones/min activan la calma; Zaccaro et al., 2018).</li>
+          <li><strong>Relajación muscular progresiva de Jacobson (10-15 min):</strong> Tensa un grupo muscular 5 segundos (puños, brazos, hombros, cara, abdomen, piernas, pies). Suelta de golpe y nota la diferencia 15-20 segundos. Ideal antes de dormir.</li>
+          <li><strong>Mindfulness (10 min diarios):</strong> Siéntate, atiende a la respiración y, cuando la mente se vaya, vuelve sin juzgarte (programas MBSR de 8 semanas tienen buena evidencia; Hofmann et al., 2010).</li>
+          <li><strong>Anclaje 5-4-3-2-1 (para picos):</strong> Nombra 5 cosas que ves, 4 que tocas, 3 que oyes, 2 que hueles y 1 que saboreas (disponible en el botón SOS).</li>
+        </ul>
+      </div>
+
+      <!-- CAJA DE TIEMPO DE PREOCUPACIÓN (15 MIN) -->
+      <div class="card">
+        <span class="badge badge-mod">HERRAMIENTA INTERACTIVA · SECCIÓN 3</span>
+        <h3>⏳ Tiempo de Preocupación (15 min al día)</h3>
+        <p>Elige una hora fija para anotar lo que te inquieta. Fuera de ese rato, pospones la preocupación diciéndote: <em>"Lo veo a mi hora fijada"</em>. Reduce la rumiación durante el día.</p>
+        <label style="font-size:12.5px; color:var(--sage); font-weight:700;">Hora fija elegida:</label>
+        <input type="time" id="worryTimeInput" value="18:00">
+        <input type="text" id="worryTextInput" placeholder="Anota aquí tu inquietud y déjala aparcada...">
+        <button class="btn" onclick="addWorryItem()">Aparcar preocupación hasta mi hora fija</button>
+        <ul id="worryList" class="clean-list" style="margin-top:12px;"></ul>
+      </div>
+
+      <!-- REGISTRO DE PENSAMIENTOS (TCC BÁSICA, 5 MIN) -->
+      <div class="card">
+        <span class="badge badge-high">TCC BÁSICA · 5 MIN (Hofmann et al., 2012)</span>
+        <h3>📝 Registro de Pensamientos</h3>
+        <p>Escribirlo ayuda a tomar distancia cognitiva:</p>
+        <input type="text" id="cbtSit" placeholder="1. Situación (¿Qué ha pasado?)">
+        <input type="text" id="cbtThought" placeholder="2. Pensamiento ansioso (¿Qué temo que ocurra?)">
+        <input type="text" id="cbtEmotion" placeholder="3. Emoción y nivel (0-10)">
+        <input type="text" id="cbtEvidence" placeholder="4. Evidencia real a favor y en contra">
+        <input type="text" id="cbtAlt" placeholder="5. Pensamiento alternativo más realista">
+        <button class="btn" onclick="saveCbtThought()">Guardar reestructuración cognitiva</button>
+        <div id="cbtSavedList" style="margin-top:12px; font-size:13px;"></div>
+      </div>
+
+      <span class="section-label">SECCIÓN 2 · LOS 6 EJERCICIOS CON RESPALDO CIENTÍFICO</span>
+      <div class="card card-terracotta">
+        <h3>💡 Reglas de oro del ejercicio físico</h3>
+        <ul class="clean-list">
+          <li><strong>Empieza poco a poco:</strong> Comienza con 10-15 minutos y sube gradualmente. La constancia importa más que la intensidad. Prefiere lo que disfrutes.</li>
+          <li><strong>Escucha a tu cuerpo:</strong> Si el ejercicio intenso te recuerda a un ataque de pánico (corazón acelerado, falta de aire), <strong>no es peligroso en sí</strong>; empieza más suave. Si tienes dudas cardíacas, consulta con tu médico.</li>
+          <li><strong>Cuida tu descanso:</strong> Evita entrenar fuerte en las 2-3 horas previas a acostarte.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>1. Caminar a paso ligero o trotar suave</h3>
+        <span class="badge badge-high">30 min · 3-5 días/semana</span>
+        <p><strong>Cómo:</strong> Ritmo en el que puedes hablar pero no cantar. Mejor al aire libre y con luz natural.<br><strong>Aporta:</strong> Reduce tensión, mejora sueño y ánimo.</p>
+
+        <h3>2. Entrenamiento de fuerza</h3>
+        <span class="badge badge-high">2-3 días/semana (Gordon et al., 2017)</span>
+        <p><strong>Cómo:</strong> Sentadillas, flexiones (en pared o rodillas), remo con goma, plancha. 2-3 series de 8-12 repeticiones.<br><strong>Aporta:</strong> Mejora síntomas y sensación de capacidad.</p>
+
+        <h3>3. Yoga</h3>
+        <span class="badge badge-mod">2-3 días/semana</span>
+        <p><strong>Cómo:</strong> Clases para principiantes o vídeos de 20-30 min, atendiendo a la respiración.<br><strong>Aporta:</strong> Une movimiento, respiración y atención plena.</p>
+
+        <h3>4. Tai chi / Qigong</h3>
+        <span class="badge badge-mod">2-3 días/semana</span>
+        <p><strong>Cómo:</strong> Movimientos lentos y fluidos. Aptos para casi todas las edades.<br><strong>Aporta:</strong> Baja la activación y mejora el equilibrio.</p>
+
+        <h3>5. Natación o bicicleta suave</h3>
+        <span class="badge badge-mod">2-3 días/semana</span>
+        <p><strong>Cómo:</strong> Ritmo constante y moderado, sin competir.<br><strong>Aporta:</strong> Aeróbico de bajo impacto.</p>
+
+        <h3>6. Estiramientos y movilidad</h3>
+        <span class="badge badge-high">Diario · 10 min</span>
+        <p style="margin-bottom:0;"><strong>Cómo:</strong> 10 min al levantarte o antes de dormir: cuello, hombros, espalda, caderas.<br><strong>Aporta:</strong> Libera tensión muscular acumulada.</p>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- PESTAÑA 3: ALIMENTACIÓN (SEC 4) Y LAS 20 RECETAS FÁCILES (SEC 5)    -->
+    <!-- =================================================================== -->
+    <section id="tab-nutrition" class="tab-section">
+      <span class="section-label">SECCIÓN 4 · QUÉ PRIORIZAR Y QUÉ LIMITAR</span>
+      <div class="card card-sage">
+        <h3>🟢 Alimentos a Priorizar (Dieta Mediterránea)</h3>
+        <ul class="clean-list">
+          <li><strong>Pescado azul (salmón, sardina, caballa, boquerón):</strong> Ricos en omega-3; efecto modesto pero consistente (Su et al., 2018).</li>
+          <li><strong>Verduras de hoja verde (espinacas, acelgas, kale):</strong> Magnesio y folato, implicados en la regulación del estrés.</li>
+          <li><strong>Frutos secos y semillas (nueces, almendras, calabaza, chía):</strong> Magnesio, zinc y grasas saludables.</li>
+          <li><strong>Legumbres y cereales integrales (avena, arroz integral, quinoa):</strong> Energía estable y fibra; evitan picos de glucosa.</li>
+          <li><strong>Fermentados (yogur natural, kéfir, chucrut):</strong> Cuidan la microbiota (eje intestino-cerebro).</li>
+          <li><strong>Frutas y frutos rojos (kiwi, plátano, arándanos):</strong> Antioxidantes, vitamina C y potasio.</li>
+          <li><strong>Huevos, aguacate y AOVE:</strong> Colina, grasas monoinsaturadas y vitaminas del grupo B.</li>
+          <li><strong>Infusiones y agua (manzanilla, tila, melisa):</strong> Hidratación y ritual relajante.</li>
+        </ul>
+      </div>
+
+      <div class="card card-terracotta">
+        <h3>🟠 A Limitar o Evitar</h3>
+        <ul class="clean-list">
+          <li><strong>Cafeína en exceso (café, cola, energéticas, mate):</strong> Provoca palpitaciones, temblor e insomnio. Baja poco a poco; el límite general es de unos 400 mg/día y con ansiedad muchos necesitan menos.</li>
+          <li><strong>Alcohol:</strong> Da alivio breve pero aumenta la ansiedad al día siguiente y empeora el sueño.</li>
+          <li><strong>Azúcares refinados y ultraprocesados:</strong> Picos y bajadas de glucosa que imitan o agravan síntomas físicos.</li>
+          <li><strong>Saltarse comidas:</strong> La bajada de azúcar en sangre produce temblor, mareo y nerviosismo.</li>
+          <li><strong>Tabaco y nicotina:</strong> Parece calmar, pero es un estimulante que mantiene la ansiedad.</li>
+          <li><strong>Cenas copiosas o muy tarde:</strong> Empeoran el sueño y la digestión.</li>
+        </ul>
+        <p style="font-size:12.5px; color:var(--amber); margin-top:10px; margin-bottom:0;">
+          ⚠️ <strong>Suplementos:</strong> Magnesio, omega-3 o ashwagandha tienen evidencia limitada. Consulta siempre a tu médico antes de tomar alguno, sobre todo si tomas medicación: la <strong>hierba de San Juan (hipérico)</strong> interactúa con muchos fármacos, incluidos antidepresivos.
+        </p>
+      </div>
+
+      <span class="section-label">SECCIÓN 5 · LAS 20 RECETAS FÁCILES (2 PERSONAS · 10-25 MIN)</span>
+      <div style="display:flex; gap:6px; overflow-x:auto; margin-bottom:14px; padding-bottom:4px;">
+        <button class="chip active" onclick="filterRecipes('Todas', this)">Todas (20)</button>
+        <button class="chip" onclick="filterRecipes('Desayunos', this)">Desayunos (1-5)</button>
+        <button class="chip" onclick="filterRecipes('Comidas', this)">Comidas (6-12)</button>
+        <button class="chip" onclick="filterRecipes('Cenas', this)">Cenas (13-17)</button>
+        <button class="chip" onclick="filterRecipes('Snacks', this)">Snacks (18-20)</button>
+      </div>
+
+      <div id="recipesContainer"></div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- PESTAÑA 4: SUEÑO (SEC 6), PLAN SEMANAL Y REGISTRO DIARIO (SEC 7)    -->
+    <!-- =================================================================== -->
+    <section id="tab-plan" class="tab-section">
+      <span class="section-label">SECCIÓN 7 · REGISTRO DIARIO (GUARDADO EN TU IPHONE)</span>
+      <div class="card card-sage">
+        <h3>📊 Mi Registro de Hoy</h3>
+        <label style="font-size:13px;">Ansiedad hoy (0-10): <strong id="anxVal">4</strong></label>
+        <input type="range" id="logAnxiety" min="0" max="10" value="4" oninput="document.getElementById('anxVal').innerText = this.value">
+
+        <label style="font-size:13px;">Sueño anoche (horas): <strong id="sleepVal">7</strong> h</label>
+        <input type="range" id="logSleep" min="2" max="11" step="0.5" value="7" oninput="document.getElementById('sleepVal').innerText = this.value">
+
+        <input type="text" id="logExercise" placeholder="Ejercicio realizado hoy (ej: Caminata 30 min)">
+        <input type="text" id="logCaffeine" placeholder="Cafeína hoy (nº de tazas)">
+        <input type="text" id="logHelped" placeholder="¿Qué me ayudó hoy? (ej: Respirar, hablar, receta...)">
+
+        <button class="btn" onclick="saveDailyLog()">Guardar en mi diario</button>
+        <div id="dailyLogsHistory" style="margin-top:14px; font-size:13px;"></div>
+      </div>
+
+      <span class="section-label">SECCIÓN 7 · PLAN SEMANAL DE EJEMPLO</span>
+      <div class="card">
+        <h3>🗓️ Empieza con 2 o 3 casillas y ve sumando</h3>
+        <div class="plan-row"><strong>Lunes:</strong> 🏃 Caminata ligera 30 min | 🧘 Respiración lenta 5 min | 🍲 Recetas 1 y 8</div>
+        <div class="plan-row"><strong>Martes:</strong> 💪 Fuerza en casa 30 min | 🧘 Mindfulness 10 min | 🍲 Recetas 6 y 13</div>
+        <div class="plan-row"><strong>Miércoles:</strong> 🧘 Yoga o tai chi 30 min | 🌙 Jacobson antes de dormir | 🍲 Recetas 2 y 12</div>
+        <div class="plan-row"><strong>Jueves:</strong> 🚴 Caminata o bici 30 min | 🧘 Respiración lenta 5 min | 🍲 Recetas 7 y 14</div>
+        <div class="plan-row"><strong>Viernes:</strong> 💪 Fuerza en casa 30 min | 🧘 Mindfulness 10 min | 🍲 Recetas 3 y 11</div>
+        <div class="plan-row"><strong>Sábado:</strong> 🌲 Salida al aire libre | 📵 Rato sin pantallas, quedar con alguien | 🍲 Recetas 9 y 18</div>
+        <div class="plan-row"><strong>Domingo:</strong> 🤸 Estiramientos 15 min | 📝 Revisión: ¿qué me ayudó? | 🍲 Recetas 10, 19 y 20</div>
+      </div>
+
+      <span class="section-label">SECCIÓN 6 · SUEÑO Y HÁBITOS DIARIOS</span>
+      <div class="card">
+        <h3>🌙 Higiene del Sueño y Hábitos de Apoyo</h3>
+        <ul class="clean-list">
+          <li>Acuéstate y levántate a la misma hora, también los fines de semana.</li>
+          <li>Pantallas fuera de la cama y apagadas 60 minutos antes de dormir.</li>
+          <li>Habitación oscura, fresca y silenciosa.</li>
+          <li><strong>Regla de los 20 min:</strong> Si pasas 20 minutos sin dormirte, levántate y haz algo tranquilo con luz tenue.</li>
+          <li>Sin cafeína después de comer ni alcohol por la noche. (Si el insomnio dura semanas, pregunta a tu médico por la TCC específica para insomnio).</li>
+          <li><strong>Luz solar por la mañana (10-20 min)</strong> y contacto social real cada semana.</li>
+          <li>Menos noticias y redes al despertar y al acostarte.</li>
+          <li>No evitar sistemáticamente lo que te da miedo: avanza por pasos.</li>
+          <li><strong>Compasión contigo:</strong> los días malos no son un retroceso total.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- PESTAÑA 5: CUÁNDO PEDIR AYUDA, SEÑALES Y FUENTES (SECCIÓN 8)        -->
+    <!-- =================================================================== -->
+    <section id="tab-help" class="tab-section">
+      <span class="section-label">SECCIÓN 8 · CUÁNDO Y DÓNDE PEDIR AYUDA</span>
+      <div class="card card-terracotta">
+        <h3>🚨 Ayuda inmediata en crisis (España)</h3>
+        <p style="color:var(--text-main);">Si estás en crisis o piensas en hacerte daño, busca ayuda hoy mismo:</p>
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <a href="tel:024" class="btn" style="text-decoration:none; background:var(--terracotta);">📞 Llamar al 024 (24h Gratuito)</a>
+          <a href="tel:112" class="btn btn-secondary" style="text-decoration:none;">🚑 Emergencias 112</a>
+        </div>
+        <p style="margin-top:10px; margin-bottom:0; font-size:13px;">También puedes acudir a urgencias de tu centro de salud u hospital y hablar con alguien de confianza ahora mismo.</p>
+      </div>
+
+      <div class="card">
+        <h3>⚠️ Señales de aviso para consultar a un profesional</h3>
+        <ul class="clean-list">
+          <li>La ansiedad te impide trabajar, estudiar, dormir o relacionarte con normalidad.</li>
+          <li>Tienes ataques de pánico frecuentes o evitas cada vez más situaciones.</li>
+          <li>Usas alcohol u otras sustancias para calmarte.</li>
+          <li>Notas tristeza profunda, desesperanza o falta de ganas de todo.</li>
+          <li><strong>Síntomas físicos nuevos o intensos</strong> (dolor de pecho, mareos, falta de aire): conviene descartar causas médicas.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🏥 Tratamientos con mejor evidencia</h3>
+        <ul class="clean-list">
+          <li><strong>Terapia cognitivo-conductual (TCC):</strong> El tratamiento psicológico con más respaldo.</li>
+          <li><strong>Terapias de aceptación y mindfulness (ACT, MBSR).</strong></li>
+          <li><strong>Tratamiento farmacológico (ej. ISRS/IRSN):</strong> Pautado y supervisado por un médico; no se interrumpe de golpe.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>📚 Fuentes científicas de referencia</h3>
+        <ul class="clean-list" style="font-size:12.5px; color:var(--text-muted);">
+          <li>Stubbs et al. (2017). Efectos ansiolíticos del ejercicio: metaanálisis. <em>Psychiatry Research</em>.</li>
+          <li>Gordon et al. (2017). Entrenamiento de fuerza y ansiedad: metaanálisis. <em>Sports Medicine</em>.</li>
+          <li>Singh et al. (2023). Actividad física, depresión, ansiedad y distrés: revisión de revisiones. <em>British Journal of Sports Medicine</em>.</li>
+          <li>Hofmann et al. (2010). Terapia basada en mindfulness en ansiedad y depresión. <em>J Consult Clin Psychol</em>.</li>
+          <li>Hofmann et al. (2012). Eficacia de la TCC: revisión de metaanálisis. <em>Cognitive Therapy and Research</em>.</li>
+          <li>Zaccaro et al. (2018). Respiración lenta y estado psicofisiológico. <em>Frontiers in Human Neuroscience</em>.</li>
+          <li>Su et al. (2018). Omega-3 y síntomas de ansiedad. <em>JAMA Network Open</em>.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- BOTÓN FLOTANTE SOS SIEMPRE VISIBLE -->
+  <button class="sos-fab" onclick="openSosModal()">
+    ❤️ SOS Calma
+  </button>
+
+  <!-- MODAL DE EMERGENCIA SOS (RESPIRACIÓN 4s-6s Y ANCLAJE 5-4-3-2-1) -->
+  <div id="sosModal" class="sos-modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="margin:0;">Estás a salvo aquí</h2>
+      <button class="chip" onclick="closeSosModal()">✕ Cerrar</button>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-bottom:16px;">
+      <button class="chip active" id="btnMode46" onclick="setBreathPattern(4, 0, 6, this)">Diafragmática (4s - 6s)</button>
+      <button class="chip" id="btnMode478" onclick="setBreathPattern(4, 7, 8, this)">Crisis (4 - 7 - 8)</button>
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <p id="breathInstruction" style="font-size:17px; color:var(--text-main); font-weight:600; margin-bottom:4px;">
+        Inspira por la nariz hinchando la barriga
+      </p>
+      <p style="font-size:13px; margin-bottom:0;">Unas 6 respiraciones por minuto activan tu sistema de calma</p>
+
+      <div class="breath-circle-wrap">
+        <div id="breathCircle" class="breath-circle">4</div>
+      </div>
+    </div>
+
+    <!-- ANCLAJE INTERACTIVO 5-4-3-2-1 -->
+    <div class="card">
+      <span class="badge badge-high" id="groundingBadge">ANCLAJE 5-4-3-2-1 · PASO 1 DE 5</span>
+      <h3 id="groundingTitle">Nombra 5 cosas que puedas VER ahora mismo</h3>
+      <p id="groundingSub">Toca cada círculo conforme las vayas mirando a tu alrededor:</p>
+      <div id="groundingDots" class="grounding-dots"></div>
+      <button class="btn btn-secondary" onclick="resetGrounding()" style="font-size:13px; padding:10px;">Reiniciar anclaje 5-4-3-2-1</button>
+    </div>
+  </div>
+
+  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="switchTab('tab-home', this)">
+      <span class="nav-icon">🌱</span>
+      <span>Guía</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('tab-body-mind', this)">
+      <span class="nav-icon">🧘</span>
+      <span>Cuerpo/Mente</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('tab-nutrition', this)">
+      <span class="nav-icon">🍲</span>
+      <span>20 Recetas</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('tab-plan', this)">
+      <span class="nav-icon">📅</span>
+      <span>Plan/Diario</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('tab-help', this)">
+      <span class="nav-icon">🛟</span>
+      <span>Ayuda 024</span>
+    </button>
+  </nav>
+
+  <script>
+    // =========================================================================
+    // 1. BASE DE DATOS DE LAS 20 RECETAS DEL PDF (SECCIÓN 5)
+    // =========================================================================
+    const all20Recipes = [
+      { num: 1, cat: 'Desayunos', title: 'Avena nocturna con plátano y nueces', ing: '100 g de copos de avena, 300 ml de leche o bebida vegetal, 1 cucharadita de chía, 1 plátano, un puñado de nueces.', prep: 'Mezcla avena, leche y chía en un bote y déjalo en la nevera toda la noche. Por la mañana añade el plátano en rodajas y las nueces.' },
+      { num: 2, cat: 'Desayunos', title: 'Tostada integral con aguacate y huevo', ing: '2 rebanadas de pan integral, 1 aguacate pequeño, 2 huevos, sal, pimienta y un chorrito de limón.', prep: 'Tuesta el pan, tritura el aguacate con limón y sal y extiéndelo. Cubre con huevo cocido o a la plancha.' },
+      { num: 3, cat: 'Desayunos', title: 'Yogur con frutos rojos y almendras', ing: '2 yogures naturales sin azúcar, 150 g de frutos rojos, 20 g de almendras, canela.', prep: 'Pon el yogur en un bol, añade la fruta y las almendras troceadas y espolvorea canela.' },
+      { num: 4, cat: 'Desayunos', title: 'Batido verde suave', ing: '1 puñado de espinacas, 1 plátano, 1 kiwi, 250 ml de leche o bebida vegetal, 1 cucharadita de chía.', prep: 'Bate todo hasta que quede homogéneo. Sirve frío.' },
+      { num: 5, cat: 'Desayunos', title: 'Porridge caliente de manzana y canela', ing: '80 g de avena, 400 ml de leche, 1 manzana, canela, 1 cucharadita de miel (opcional).', prep: 'Cuece la avena con la leche 5 minutos removiendo. Añade la manzana rallada y la canela al final.' },
+      { num: 6, cat: 'Comidas', title: 'Ensalada de garbanzos con atún', ing: '1 bote de garbanzos cocidos, 1 lata de atún al natural, tomate, pepino, cebolla tierna, AOVE, limón.', prep: 'Escurre y enjuaga los garbanzos. Mezcla con las verduras troceadas y el atún. Aliña con aceite, limón y sal.' },
+      { num: 7, cat: 'Comidas', title: 'Lentejas rápidas con verduras', ing: '1 bote de lentejas cocidas, 1 zanahoria, 1/2 cebolla, 1 diente de ajo, pimentón dulce, aceite de oliva.', prep: 'Sofríe cebolla, ajo y zanahoria en dados 8 minutos. Añade pimentón, las lentejas y un vaso de agua. Cuece 10 minutos.' },
+      { num: 8, cat: 'Comidas', title: 'Salmón al horno con brócoli', ing: '2 lomos de salmón, 1 brócoli, aceite de oliva, limón, sal, pimienta.', prep: 'Horno a 200°C. Coloca el brócoli en cogollos y el salmón en una bandeja con aceite y limón. Hornea 12-15 minutos.' },
+      { num: 9, cat: 'Comidas', title: 'Arroz integral salteado con verduras y huevo', ing: '200 g de arroz integral cocido, 1 zanahoria, 1 calabacín, 2 huevos, salsa de soja baja en sal.', prep: 'Saltea las verduras en dados 5 minutos. Añade el arroz y la soja. Haz un hueco, revuelve los huevos y mézclalo todo.' },
+      { num: 10, cat: 'Comidas', title: 'Crema de calabaza y zanahoria con jengibre', ing: '400 g de calabaza, 2 zanahorias, 1 cebolla, jengibre fresco, 500 ml de caldo, aceite de oliva.', prep: 'Rehoga la cebolla, añade las verduras troceadas y el caldo. Cuece 20 minutos con jengibre rallado y tritura.' },
+      { num: 11, cat: 'Comidas', title: 'Pasta integral con tomate y espinacas', ing: '200 g de pasta integral, 300 g de tomate triturado, 1 puñado de espinacas, ajo, albahaca.', prep: 'Cuece la pasta. Sofríe el ajo, añade el tomate 8 minutos y las espinacas al final. Mezcla con la pasta.' },
+      { num: 12, cat: 'Comidas', title: 'Pollo a la plancha con ensalada de quinoa', ing: '2 pechugas de pollo, 150 g de quinoa cocida, pepino, tomate cherry, limón, aceite de oliva.', prep: 'Haz el pollo a la plancha con sal, pimienta y limón. Mezcla la quinoa con las verduras y aliña. Sirve junto.' },
+      { num: 13, cat: 'Cenas', title: 'Tortilla de espinacas', ing: '4 huevos, 150 g de espinacas, 1/2 cebolla, aceite de oliva, sal.', prep: 'Saltea cebolla y espinacas 4 minutos. Mezcla con los huevos batidos y cuaja en la sartén por ambos lados.' },
+      { num: 14, cat: 'Cenas', title: 'Caballa a la plancha con ensalada de tomate', ing: '2 filetes de caballa, 2 tomates, cebolla tierna, aceite de oliva, orégano.', prep: 'Haz la caballa 3 minutos por lado. Aliña el tomate con cebolla, aceite, orégano y sal.' },
+      { num: 15, cat: 'Cenas', title: 'Sopa de verduras con huevo', ing: '1 puerro, 1 zanahoria, 1 patata pequeña, 600 ml de caldo, 2 huevos.', prep: 'Cuece las verduras troceadas en el caldo 15 minutos. Casca los huevos dentro y deja 3 minutos más.' },
+      { num: 16, cat: 'Cenas', title: 'Wrap integral de hummus y verduras', ing: '2 tortillas de trigo integral, 4 cucharadas de hummus, zanahoria rallada, espinacas, pepino.', prep: 'Extiende el hummus, añade las verduras, enrolla y corta por la mitad.' },
+      { num: 17, cat: 'Cenas', title: 'Merluza al papillote con verduras', ing: '2 lomos de merluza, 1 calabacín, 1 zanahoria, aceite de oliva, limón.', prep: 'Coloca las verduras en láminas y el pescado sobre papel de horno. Cierra y hornea 15 minutos a 190°C.' },
+      { num: 18, cat: 'Snacks', title: 'Hummus casero con palitos de zanahoria', ing: '1 bote de garbanzos, 1 cucharada de tahini, 1 diente de ajo, zumo de 1/2 limón, aceite de oliva, sal.', prep: 'Tritura todo con un chorrito de agua hasta obtener una crema. Acompaña con palitos de zanahoria o pepino.' },
+      { num: 19, cat: 'Snacks', title: 'Infusión relajante de tila y melisa', ing: '1 cucharadita de tila, 1 cucharadita de melisa, 250 ml de agua caliente.', prep: 'Infunde 5-7 minutos tapado, cuela y bebe despacio, sin pantallas. Ritual de 10 minutos antes de dormir.' },
+      { num: 20, cat: 'Snacks', title: 'Bolitas de dátil, avena y cacao', ing: '8 dátiles sin hueso, 50 g de avena, 1 cucharada de cacao puro, 20 g de almendras.', prep: 'Tritura los dátiles con el resto hasta formar una masa. Haz bolitas y guarda en la nevera hasta 5 días.' }
+    ];
+
+    function renderRecipes(category = 'Todas') {
+      const container = document.getElementById('recipesContainer');
+      const list = category === 'Todas' ? all20Recipes : all20Recipes.filter(r => r.cat === category);
+      container.innerHTML = list.map(r => `
+        <div class="card">
+          <span class="badge badge-high">RECETA #${r.num} · ${r.cat.toUpperCase()}</span>
+          <h3>${r.title}</h3>
+          <p><strong>🛒 Ingredientes:</strong> ${r.ing}</p>
+          <p style="margin-bottom:0; color:var(--text-main);"><strong>👩‍🍳 Preparación:</strong> ${r.prep}</p>
+        </div>
+      `).join('');
+    }
+
+    function filterRecipes(cat, btn) {
+      btn.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      renderRecipes(cat);
+    }
+
+    // =========================================================================
+    // 2. NAVEGACIÓN Y ALMACENAMIENTO LOCAL EN EL IPHONE
+    // =========================================================================
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function addCalmMoment(msg) {
+      let count = parseInt(localStorage.getItem('calmMoments') || '0') + 1;
+      localStorage.setItem('calmMoments', count);
+      document.getElementById('calmCounter').innerText = `✨ ${count} momentos`;
+      if (msg) alert(msg);
+    }
+
+    function saveHabitChoice() {
+      const val = document.getElementById('twoWeekHabit').value;
+      localStorage.setItem('twoWeekHabit', val);
+    }
+
+    function addWorryItem() {
+      const input = document.getElementById('worryTextInput');
+      const time = document.getElementById('worryTimeInput').value;
+      if (!input.value.trim()) return;
+      const worries = JSON.parse(localStorage.getItem('worriesList') || '[]');
+      worries.unshift({ text: input.value.trim(), time: time });
+      localStorage.setItem('worriesList', JSON.stringify(worries));
+      input.value = '';
+      renderWorries();
+    }
+
+    function renderWorries() {
+      const worries = JSON.parse(localStorage.getItem('worriesList') || '[]');
+      document.getElementById('worryList').innerHTML = worries.map(w =>
+        `<li>Posponer hasta las <strong>${w.time}</strong>: "${w.text}"</li>`
+      ).join('');
+    }
+
+    function saveCbtThought() {
+      const sit = document.getElementById('cbtSit').value;
+      const th = document.getElementById('cbtThought').value;
+      const alt = document.getElementById('cbtAlt').value;
+      if (!th.trim()) return;
+      const list = JSON.parse(localStorage.getItem('cbtList') || '[]');
+      list.unshift({ sit, th, alt });
+      localStorage.setItem('cbtList', JSON.stringify(list.slice(0, 5)));
+      document.getElementById('cbtSit').value = '';
+      document.getElementById('cbtThought').value = '';
+      document.getElementById('cbtEmotion').value = '';
+      document.getElementById('cbtEvidence').value = '';
+      document.getElementById('cbtAlt').value = '';
+      renderCbtList();
+      addCalmMoment();
+    }
+
+    function renderCbtList() {
+      const list = JSON.parse(localStorage.getItem('cbtList') || '[]');
+      document.getElementById('cbtSavedList').innerHTML = list.map(item => `
+        <div style="padding:10px; background:var(--bg-input); border-radius:10px; margin-bottom:8px;">
+          <strong>Pensamiento:</strong> ${item.th}<br>
+          <span style="color:var(--sage);"><strong>Alternativa realista:</strong> ${item.alt}</span>
+        </div>
+      `).join('');
+    }
+
+    function saveDailyLog() {
+      const anx = document.getElementById('logAnxiety').value;
+      const sleep = document.getElementById('logSleep').value;
+      const ex = document.getElementById('logExercise').value || 'Descanso';
+      const caf = document.getElementById('logCaffeine').value || '0';
+      const helped = document.getElementById('logHelped').value || '-';
+      const date = new Date().toLocaleDateString('es-ES');
+
+      const logs = JSON.parse(localStorage.getItem('dailyLogs') || '[]');
+      logs.unshift({ date, anx, sleep, ex, caf, helped });
+      localStorage.setItem('dailyLogs', JSON.stringify(logs.slice(0, 14)));
+      document.getElementById('logExercise').value = '';
+      document.getElementById('logHelped').value = '';
+      renderDailyLogs();
+      addCalmMoment();
+    }
+
+    function renderDailyLogs() {
+      const logs = JSON.parse(localStorage.getItem('dailyLogs') || '[]');
+      document.getElementById('dailyLogsHistory').innerHTML = logs.map(l => `
+        <div style="padding:10px; background:var(--bg-input); border-radius:10px; margin-bottom:8px;">
+          <strong>📅 ${l.date}</strong> · Ansiedad: ${l.anx}/10 · Sueño: ${l.sleep}h<br>
+          🏃 Ejercicio: ${l.ex} · ☕ Cafeína: ${l.caf} · 💡 Me ayudó: ${l.helped}
+        </div>
+      `).join('');
+    }
+
+    // =========================================================================
+    // 3. MOTOR DE RESPIRACIÓN SOS Y ANCLAJE 5-4-3-2-1
+    // =========================================================================
+    let breathTimer = null;
+    let inhaleSec = 4, holdSec = 0, exhaleSec = 6;
+    let currentPhase = 'inhale';
+    let secondsLeft = 4;
+
+    function openSosModal() {
+      document.getElementById('sosModal').classList.add('open');
+      startBreathingTimer();
+      resetGrounding();
+    }
+
+    function closeSosModal() {
+      document.getElementById('sosModal').classList.remove('open');
+      clearInterval(breathTimer);
+    }
+
+    function setBreathPattern(i, h, e, btn) {
+      document.getElementById('btnMode46').classList.remove('active');
+      document.getElementById('btnMode478').classList.remove('active');
+      btn.classList.add('active');
+      inhaleSec = i; holdSec = h; exhaleSec = e;
+      startBreathingTimer();
+    }
+
+    function startBreathingTimer() {
+      clearInterval(breathTimer);
+      currentPhase = 'inhale';
+      secondsLeft = inhaleSec;
+      updateBreathUI();
+
+      breathTimer = setInterval(() => {
+        if (secondsLeft > 1) {
+          secondsLeft--;
+        } else {
+          if (currentPhase === 'inhale') {
+            if (holdSec > 0) {
+              currentPhase = 'hold';
+              secondsLeft = holdSec;
+            } else {
+              currentPhase = 'exhale';
+              secondsLeft = exhaleSec;
+            }
+          } else if (currentPhase === 'hold') {
+            currentPhase = 'exhale';
+            secondsLeft = exhaleSec;
+          } else {
+            currentPhase = 'inhale';
+            secondsLeft = inhaleSec;
+          }
+        }
+        updateBreathUI();
+      }, 1000);
+    }
+
+    function updateBreathUI() {
+      const circle = document.getElementById('breathCircle');
+      const text = document.getElementById('breathInstruction');
+      circle.innerText = secondsLeft;
+
+      if (currentPhase === 'inhale') {
+        text.innerText = 'Inspira por la nariz hinchando la barriga (4s)';
+        circle.style.transform = 'scale(1.32)';
+      } else if (currentPhase === 'hold') {
+        text.innerText = 'Mantén el aire en calma (7s)';
+        circle.style.transform = 'scale(1.32)';
+      } else {
+        text.innerText = `Espira despacio por la boca como soplando una vela (${exhaleSec}s)`;
+        circle.style.transform = 'scale(0.88)';
+      }
+    }
+
+    // Anclaje 5-4-3-2-1
+    const groundingSteps = [
+      { count: 5, title: 'Nombra 5 cosas que puedas VER', sub: 'Mira a tu alrededor y toca cada círculo al identificar un objeto.' },
+      { count: 4, title: 'Nombra 4 cosas que puedas TOCAR', sub: 'Siente la textura de tu ropa, la silla o tus manos.' },
+      { count: 3, title: 'Escucha 3 SONIDOS presentes', sub: 'Presta atención a sonidos cercanos o lejanos.' },
+      { count: 2, title: 'Identifica 2 OLORES', sub: 'Olores en el ambiente o recuerda tus 2 aromas favoritos.' },
+      { count: 1, title: 'Nota 1 SABOR o di 1 frase amable', sub: 'Regresa al presente con calma.' }
+    ];
+    let gStepIndex = 0;
+    let gTapped = 0;
+
+    function resetGrounding() {
+      gStepIndex = 0;
+      gTapped = 0;
+      renderGrounding();
+    }
+
+    function renderGrounding() {
+      const step = groundingSteps[gStepIndex];
+      document.getElementById('groundingBadge').innerText = `ANCLAJE 5-4-3-2-1 · PASO ${gStepIndex + 1} DE 5`;
+      document.getElementById('groundingTitle').innerText = step.title;
+      document.getElementById('groundingSub').innerText = step.sub;
+
+      const dotsContainer = document.getElementById('groundingDots');
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < step.count; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'g-dot' + (i < gTapped ? ' done' : '');
+        dot.innerText = i < gTapped ? '✓' : (i + 1);
+        dot.onclick = () => {
+          if (i === gTapped) {
+            gTapped++;
+            if (gTapped >= step.count) {
+              if (gStepIndex < groundingSteps.length - 1) {
+                gStepIndex++;
+                gTapped = 0;
+              } else {
+                addCalmMoment('Has completado el anclaje sensorial 5-4-3-2-1.');
+              }
+            }
+            renderGrounding();
+          }
+        };
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    // =========================================================================
+    // 4. SINTETIZADOR DE SONIDOS RELAJANTES (FUNCIONA OFFLINE EN SAFARI IPHONE)
+    // =========================================================================
+    let audioCtx = null;
+    let currentNodes = [];
+
+    function stopAllSounds() {
+      currentNodes.forEach(n => {
+        try { if (n.stop) n.stop(); if (n.disconnect) n.disconnect(); } catch (e) {}
+      });
+      currentNodes = [];
+    }
+
+    function setSound(type, btn) {
+      btn.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      stopAllSounds();
+      if (type === 'off') return;
+
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      if (type === 'rain' || type === 'waves') {
+        const bufferSize = 2 * audioCtx.sampleRate;
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let lastOut = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          output[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = output[i];
+          output[i] *= 0.15;
+        }
+        const whiteNoise = audioCtx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = type === 'rain' ? 750 : 280;
+
+        whiteNoise.connect(filter);
+        filter.connect(audioCtx.destination);
+        whiteNoise.start(0);
+        currentNodes.push(whiteNoise, filter);
+      } else if (type === 'vagal') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 174; // Frecuencia grave relajante
+        gain.gain.value = 0.08;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        currentNodes.push(osc, gain);
+      }
+    }
+
+    // Inicialización al cargar
+    window.onload = () => {
+      renderRecipes('Todas');
+      renderWorries();
+      renderCbtList();
+      renderDailyLogs();
+      const savedHabit = localStorage.getItem('twoWeekHabit');
+      if (savedHabit) document.getElementById('twoWeekHabit').value = savedHabit;
+      const count = localStorage.getItem('calmMoments') || '0';
+      document.getElementById('calmCounter').innerText = `✨ ${count} momentos`;
+    };
+  </script>
+</body>
+</html>
